@@ -21,9 +21,27 @@ public class Controller {
     // Driver Endpoints
     @GetMapping("/driver")
     @CrossOrigin(origins = "*")
-    public ResponseEntity<List<Driver>> getAllDrivers() {
-        List<Driver> drivers = driverService.getAllDrivers();
-        return new ResponseEntity<>(drivers, HttpStatus.OK);
+    public ResponseEntity<List<Driver>> getDrivers(
+        @RequestParam(required = false) String name,
+        @RequestParam(required = false) String nationality
+    ) {
+
+        if (name != null) {
+            return driverService.getDriverByName(name)
+                    .map(drivers -> new ResponseEntity<>(drivers, HttpStatus.OK))
+                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        }
+
+        else if (nationality != null) {
+            return driverService.getDriverByNationality(nationality)
+                    .map(drivers -> new ResponseEntity<>(drivers, HttpStatus.OK))
+                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        }
+        else {
+            List<Driver> drivers = driverService.getAllDrivers();
+            return new ResponseEntity<>(drivers, HttpStatus.OK);
+        }
+        
     }
 
     @GetMapping("/driver/{id}")
@@ -47,6 +65,7 @@ public class Controller {
         Driver updatedDriver = driverService.updateDriver(id, driver);
         return new ResponseEntity<>(updatedDriver, HttpStatus.OK);
     }
+
 
     @DeleteMapping("/driver/{id}")
     @CrossOrigin(origins = "*")

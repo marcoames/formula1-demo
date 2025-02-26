@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class DriverService {
@@ -25,8 +26,17 @@ public class DriverService {
         return driverRepository.findById(id);
     }
 
-    public Optional<List<Driver>> getDriverByNationality(String nationalString) {
-        return Optional.ofNullable(driverRepository.findByNationality(nationalString));
+    public Optional<List<Driver>> getDriverByName(String name) {
+        List<Driver> drivers = driverRepository.findAll().stream()
+                .filter(driver -> driver.getDriver().toLowerCase().equals(name.toLowerCase())).collect(Collectors.toList());
+        return Optional.of(drivers);
+    }
+
+    public Optional<List<Driver>> getDriverByNationality(String nationality) {
+        List<Driver> drivers = driverRepository.findAll().stream()
+                .filter(driver -> driver.getNationality().toLowerCase().equals(nationality.toLowerCase())).collect(Collectors.toList());
+        return Optional.of(drivers);
+                
     }
 
     public Driver createDriver(Driver driver) {
