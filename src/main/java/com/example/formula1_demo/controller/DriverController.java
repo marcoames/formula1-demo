@@ -17,31 +17,40 @@ public class DriverController {
     public DriverController(DriverService driverService) {
         this.driverService = driverService;
     }
-
-    // Driver Endpoints
+    
     @GetMapping("/driver")
     @CrossOrigin(origins = "*")
     public ResponseEntity<List<Driver>> getDrivers(
         @RequestParam(required = false) String name,
-        @RequestParam(required = false) String nationality
-    ) {
+        @RequestParam(required = false) String nationality,
+        @RequestParam(required = false) String seasons,
+        @RequestParam(required = false) Boolean champion) {
 
-        if (name != null) {
+        if (name != null && nationality != null) {
+            return driverService.getDriversByNameAndNationality(name, nationality)
+                    .map(drivers -> new ResponseEntity<>(drivers, HttpStatus.OK))
+                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        } else if (name != null) {
             return driverService.getDriverByName(name)
                     .map(drivers -> new ResponseEntity<>(drivers, HttpStatus.OK))
                     .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-        }
-
-        else if (nationality != null) {
+        } else if (nationality != null) {
             return driverService.getDriverByNationality(nationality)
                     .map(drivers -> new ResponseEntity<>(drivers, HttpStatus.OK))
                     .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-        }
-        else {
+        } else if (seasons != null) {
+            return driverService.getDriverBySeasonsActive(seasons)
+                    .map(drivers -> new ResponseEntity<>(drivers, HttpStatus.OK))
+                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+
+        } else if (champion != null) {
+            return driverService.getDriverByChampion(champion)
+                    .map(drivers -> new ResponseEntity<>(drivers, HttpStatus.OK))
+                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));            
+        } else {
             List<Driver> drivers = driverService.getAllDrivers();
             return new ResponseEntity<>(drivers, HttpStatus.OK);
         }
-        
     }
 
     @GetMapping("/driver/{id}")
