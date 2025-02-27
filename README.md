@@ -1,4 +1,4 @@
-# Formula 1 - Sistema de Gerenciamento de Pilotos
+# 🏎️ Formula 1 - Sistema de Gerenciamento de Pilotos
 
 ## 📝 Descrição
 Sistema de gerenciamento de dados históricos de pilotos da Fórmula 1, desenvolvido com Spring Boot. 
