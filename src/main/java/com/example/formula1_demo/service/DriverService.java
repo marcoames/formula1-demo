@@ -28,15 +28,32 @@ public class DriverService {
 
     public Optional<List<Driver>> getDriverByName(String name) {
         List<Driver> drivers = driverRepository.findAll().stream()
-                .filter(driver -> driver.getDriver().toLowerCase().equals(name.toLowerCase())).collect(Collectors.toList());
+                .filter(driver -> driver.getDriver().toLowerCase().contains(name.toLowerCase())).collect(Collectors.toList());
         return Optional.of(drivers);
     }
 
     public Optional<List<Driver>> getDriverByNationality(String nationality) {
         List<Driver> drivers = driverRepository.findAll().stream()
                 .filter(driver -> driver.getNationality().toLowerCase().equals(nationality.toLowerCase())).collect(Collectors.toList());
+        return Optional.of(drivers);                
+    }
+
+    public Optional<List<Driver>> getDriversByNameAndNationality(String name, String nationality) {
+        List<Driver> drivers = driverRepository.findAll().stream()
+                .filter(driver -> driver.getDriver().toLowerCase().contains(name.toLowerCase()) && driver.getNationality().toLowerCase().contains(nationality.toLowerCase())).collect(Collectors.toList());
         return Optional.of(drivers);
-                
+    }
+
+    public Optional<List<Driver>> getDriverBySeasonsActive(String seasons) {
+        List<Driver> drivers = driverRepository.findAll().stream()
+                .filter(driver -> driver.getSeasons().toLowerCase().contains(seasons.toLowerCase())).collect(Collectors.toList());
+        return Optional.of(drivers);
+    }
+
+    public Optional<List<Driver>> getDriverByChampion(Boolean champion) {
+        List<Driver> drivers = driverRepository.findAll().stream()
+                .filter(driver -> driver.getChampion().equals(champion)).collect(Collectors.toList());
+        return Optional.of(drivers);
     }
 
     public Driver createDriver(Driver driver) {
