@@ -35,7 +35,9 @@ mvn spring-boot:run
 - GET /driver - Lista todos os pilotos
 - GET /driver?name={nome} - Busca pilotos por nome
 - GET /driver?nationality={nacionalidade} - Filtra pilotos por nacionalidade
+- GET /driver?name={nome}&nationality={nacionalidade} - Busca pilotos por nome filtrando por nacionalidade
 - GET /driver?seasons={temporada} - Busca pilotos por temporada
+- GET /driver?champion=true - Busca pilotos campeoēs
 - GET /driver/{id} - Busca piloto por ID
 
 
