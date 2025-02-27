@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/driver")
 public class DriverController {
     private final DriverService driverService;
 
@@ -18,7 +18,7 @@ public class DriverController {
         this.driverService = driverService;
     }
     
-    @GetMapping("/driver")
+    @GetMapping("/")
     @CrossOrigin(origins = "*")
     public ResponseEntity<List<Driver>> getDrivers(
         @RequestParam(required = false) String name,
@@ -53,7 +53,7 @@ public class DriverController {
         }
     }
 
-    @GetMapping("/driver/{id}")
+    @GetMapping("/{id}")
     @CrossOrigin(origins = "*")
     public ResponseEntity<Driver> getDriverById(@PathVariable Long id) {
         return driverService.getDriverById(id)
@@ -61,14 +61,14 @@ public class DriverController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PostMapping("/driver")
+    @PostMapping("/")
     @CrossOrigin(origins = "*")
     public ResponseEntity<Driver> createDriver(@RequestBody final Driver driver) {
         Driver savedDriver = driverService.createDriver(driver);
         return new ResponseEntity<>(savedDriver, HttpStatus.CREATED);
     }
 
-    @PutMapping("/driver/{id}")
+    @PutMapping("/{id}")
     @CrossOrigin(origins = "*")
     public ResponseEntity<Driver> updateDriver(@PathVariable Long id, @RequestBody Driver driver) {
         Driver updatedDriver = driverService.updateDriver(id, driver);
@@ -76,7 +76,7 @@ public class DriverController {
     }
 
 
-    @DeleteMapping("/driver/{id}")
+    @DeleteMapping("/{id}")
     @CrossOrigin(origins = "*")
     public ResponseEntity<Void> deleteDriver(@PathVariable Long id) {
         driverService.deleteDriver(id);
