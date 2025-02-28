@@ -3,6 +3,7 @@ package com.example.formula1_demo.service;
 import com.example.formula1_demo.DTO.LoginRequestDTO;
 import com.example.formula1_demo.DTO.LoginResponseDTO;
 import com.example.formula1_demo.DTO.RegisterRequestDTO;
+import com.example.formula1_demo.DTO.RegisterResponseDTO;
 import com.example.formula1_demo.entity.Role;
 import com.example.formula1_demo.entity.User;
 import com.example.formula1_demo.repository.UserRepository;
@@ -34,7 +35,7 @@ public class AuthService implements IAuthService {
         throw new RuntimeException("Invalid credentials");
     }
 
-    public LoginResponseDTO register(RegisterRequestDTO registerRequest) {
+    public RegisterResponseDTO register(RegisterRequestDTO registerRequest) {
         if (userRepository.findByEmail(registerRequest.email()).isEmpty()) {
             User newUser = new User();
             newUser.setPassword(passwordEncoder.encode(registerRequest.password()));
@@ -42,13 +43,13 @@ public class AuthService implements IAuthService {
             newUser.setRole(Role.USER);
             userRepository.save(newUser);
 
-            String token = tokenService.generateToken(newUser);
-            return new LoginResponseDTO(newUser.getEmail(), token);
+            // String token = tokenService.generateToken(newUser);
+            return new RegisterResponseDTO(newUser.getEmail() + " registered successfully");
         }
         throw new RuntimeException("User already exists");
     }
 
-    public LoginResponseDTO registerAdmin(RegisterRequestDTO registerRequest) {
+    public RegisterResponseDTO registerAdmin(RegisterRequestDTO registerRequest) {
         if (userRepository.findByEmail(registerRequest.email()).isEmpty()) {
             User newUser = new User();
             newUser.setPassword(passwordEncoder.encode(registerRequest.password()));
@@ -56,8 +57,8 @@ public class AuthService implements IAuthService {
             newUser.setRole(Role.ADMIN);
             userRepository.save(newUser);
 
-            String token = tokenService.generateToken(newUser);
-            return new LoginResponseDTO(newUser.getEmail(), token);
+            // String token = tokenService.generateToken(newUser);
+            return new RegisterResponseDTO(newUser.getEmail() + " registered successfully");
         }
         throw new RuntimeException("User already exists");
     }

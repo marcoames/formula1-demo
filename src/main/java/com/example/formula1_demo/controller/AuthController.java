@@ -4,6 +4,7 @@ import com.example.formula1_demo.DTO.ErrorResponse;
 import com.example.formula1_demo.DTO.LoginRequestDTO;
 import com.example.formula1_demo.DTO.LoginResponseDTO;
 import com.example.formula1_demo.DTO.RegisterRequestDTO;
+import com.example.formula1_demo.DTO.RegisterResponseDTO;
 import com.example.formula1_demo.service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +34,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequestDTO registerRequest) {
         try {
-            LoginResponseDTO response = authService.register(registerRequest);
+            RegisterResponseDTO response = authService.register(registerRequest);
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
@@ -43,7 +44,7 @@ public class AuthController {
     @PostMapping("/register-admin")
     public ResponseEntity<?> registerAdmin(@RequestBody RegisterRequestDTO registerRequest) {
         try {
-            LoginResponseDTO response = authService.registerAdmin(registerRequest);
+            RegisterResponseDTO response = authService.registerAdmin(registerRequest);
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
