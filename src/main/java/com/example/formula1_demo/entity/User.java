@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -17,6 +18,7 @@ public class User {
 
     private String email;
     private String password;
+    @Enumerated(EnumType.STRING)
     private Role role;
 
 }
