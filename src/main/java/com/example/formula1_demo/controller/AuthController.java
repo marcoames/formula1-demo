@@ -4,12 +4,10 @@ package com.example.formula1_demo.controller;
 import com.example.formula1_demo.entity.Role;
 import com.example.formula1_demo.entity.User;
 import com.example.formula1_demo.repository.UserRepository;
-
+import com.example.formula1_demo.security.TokenService;
 import com.example.formula1_demo.DTO.LoginRequestDTO;
 import com.example.formula1_demo.DTO.RegisterRequestDTO;
-import com.example.formula1_demo.DTO.ResponseDTO;
-
-import com.example.formula1_demo.Security.TokenService;
+import com.example.formula1_demo.DTO.LoginResponseDTO;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,17 +29,18 @@ public class AuthController {
     private final TokenService tokenService;
 
     @PostMapping("/login")
-    public ResponseEntity<ResponseDTO> login(@RequestBody LoginRequestDTO body){
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO body){
         User user = this.repository.findByEmail(body.email()).orElseThrow(() -> new RuntimeException("User not found"));
         if(passwordEncoder.matches(body.password(), user.getPassword())) {
             String token = this.tokenService.generateToken(user);
-            return ResponseEntity.ok(new ResponseDTO(user.getEmail(), token));
+            return ResponseEntity.ok(new LoginResponseDTO(user.getEmail(), token));
         }
         return ResponseEntity.badRequest().build();
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ResponseDTO> register(@RequestBody RegisterRequestDTO body){
+    public ResponseEntity<LoginResponseDTO> register(@RequestBody RegisterRequestDTO body){
+
         Optional<User> user = this.repository.findByEmail(body.email());
 
         if(user.isEmpty()) {
@@ -52,7 +51,25 @@ public class AuthController {
             this.repository.save(newUser);
 
             String token = this.tokenService.generateToken(newUser);
-            return ResponseEntity.ok(new ResponseDTO(newUser.getEmail(), token));
+            return ResponseEntity.ok(new LoginResponseDTO(newUser.getEmail(), token));
+        }
+        
+        return ResponseEntity.badRequest().build();
+    }
+
+    @PostMapping("/register-admin")
+    public ResponseEntity<LoginResponseDTO> registerAdmin(@RequestBody RegisterRequestDTO body){
+        Optional<User> user = this.repository.findByEmail(body.email());
+
+        if(user.isEmpty()) {
+            User newUser = new User();
+            newUser.setPassword(passwordEncoder.encode(body.password()));
+            newUser.setEmail(body.email());
+            newUser.setRole(Role.ADMIN);
+            this.repository.save(newUser);
+
+            String token = this.tokenService.generateToken(newUser);
+            return ResponseEntity.ok(new LoginResponseDTO(newUser.getEmail(), token));
         }
         
         return ResponseEntity.badRequest().build();
