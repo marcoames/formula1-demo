@@ -26,7 +26,6 @@ public class AuthController {
             LoginResponseDTO response = authService.login(loginRequest);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (RuntimeException e) {
-            // Return error details with a BAD_REQUEST status (or customize as needed)
             return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
