@@ -1,4 +1,4 @@
-package com.example.formula1_demo.Security;
+package com.example.formula1_demo.security;
 
 import com.example.formula1_demo.entity.User;
 import com.example.formula1_demo.repository.UserRepository;
@@ -28,10 +28,16 @@ public class SecurityFilter extends OncePerRequestFilter {
         var token = this.getToken(request);
         var login = tokenService.validateToken(token);
 
-
-        if(login != null){
-            User user = userRepository.findByEmail(login).orElseThrow(() -> new RuntimeException("User Not Found"));
-            var authorities = Collections.singletonList(new SimpleGrantedAuthority(user.getRole().name()));
+        if (login != null) {
+            User user = userRepository.findByEmail(login)
+                    .orElseThrow(() -> new RuntimeException("User Not Found"));
+            
+            // Log the user's role for debugging
+            logger.info("User role: " + user.getRole().name()); 
+            
+            var authorities = Collections.singletonList(
+                new SimpleGrantedAuthority("ROLE_" + user.getRole().name())
+            );
             var authentication = new UsernamePasswordAuthenticationToken(user, null, authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
