@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.formula1_demo.entity.User;
-import com.example.formula1_demo.repository.UserRepository;
+import com.example.formula1_demo.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -18,12 +18,12 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/v1/user")
 public class UserController {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     @GetMapping("")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<User>> listUsers() {
-        var users = userRepository.findAll();
+        var users = userService.getUsers();
         return ResponseEntity.ok(users);
     }
 }
