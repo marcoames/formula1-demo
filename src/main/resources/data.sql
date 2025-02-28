@@ -1,3 +1,7 @@
+INSERT INTO users (role, id, email, password)
+VALUES 
+    (1, 1, 'admin@example.com', '$2a$10$7TD.VDKiQ3QUGrooJ0urU.AXV8gQ10u6bU5WdkkMkxUxYXReoEr2a');
+
 INSERT INTO drivers (driver, nationality, seasons, championships, race_entries, race_starts, 
     pole_positions, race_wins, podiums, fastest_laps, points, active, championship_years, 
     decade, pole_rate, start_rate, win_rate, podium_rate, fast_lap_rate, points_per_entry, 
