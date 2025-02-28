@@ -18,7 +18,7 @@ public class DriverController {
         this.driverService = driverService;
     }
     
-    @GetMapping("/")
+    @GetMapping("")
     @CrossOrigin(origins = "*")
     public ResponseEntity<List<Driver>> getDrivers(
         @RequestParam(required = false) String name,
@@ -61,7 +61,7 @@ public class DriverController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PostMapping("/")
+    @PostMapping("")
     @CrossOrigin(origins = "*")
     public ResponseEntity<Driver> createDriver(@RequestBody final Driver driver) {
         Driver savedDriver = driverService.createDriver(driver);
