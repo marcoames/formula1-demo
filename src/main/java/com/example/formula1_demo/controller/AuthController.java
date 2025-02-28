@@ -1,77 +1,52 @@
 package com.example.formula1_demo.controller;
 
-
-import com.example.formula1_demo.entity.Role;
-import com.example.formula1_demo.entity.User;
-import com.example.formula1_demo.repository.UserRepository;
-import com.example.formula1_demo.security.TokenService;
+import com.example.formula1_demo.DTO.ErrorResponse;
 import com.example.formula1_demo.DTO.LoginRequestDTO;
-import com.example.formula1_demo.DTO.RegisterRequestDTO;
 import com.example.formula1_demo.DTO.LoginResponseDTO;
-
-import lombok.RequiredArgsConstructor;
-
+import com.example.formula1_demo.DTO.RegisterRequestDTO;
+import com.example.formula1_demo.service.AuthService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Optional;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
-@RequiredArgsConstructor
 public class AuthController {
-    private final UserRepository repository;
-    private final PasswordEncoder passwordEncoder;
-    private final TokenService tokenService;
 
+    private final AuthService authService;
+
+    public AuthController(AuthService authService) {
+        this.authService = authService;
+    }
+    
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO body){
-        User user = this.repository.findByEmail(body.email()).orElseThrow(() -> new RuntimeException("User not found"));
-        if(passwordEncoder.matches(body.password(), user.getPassword())) {
-            String token = this.tokenService.generateToken(user);
-            return ResponseEntity.ok(new LoginResponseDTO(user.getEmail(), token));
+    public ResponseEntity<?> login(@RequestBody LoginRequestDTO loginRequest) {
+        try {
+            LoginResponseDTO response = authService.login(loginRequest);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            // Return error details with a BAD_REQUEST status (or customize as needed)
+            return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
-        return ResponseEntity.badRequest().build();
     }
 
     @PostMapping("/register")
-    public ResponseEntity<LoginResponseDTO> register(@RequestBody RegisterRequestDTO body){
-
-        Optional<User> user = this.repository.findByEmail(body.email());
-
-        if(user.isEmpty()) {
-            User newUser = new User();
-            newUser.setPassword(passwordEncoder.encode(body.password()));
-            newUser.setEmail(body.email());
-            newUser.setRole(Role.USER);
-            this.repository.save(newUser);
-
-            String token = this.tokenService.generateToken(newUser);
-            return ResponseEntity.ok(new LoginResponseDTO(newUser.getEmail(), token));
+    public ResponseEntity<?> register(@RequestBody RegisterRequestDTO registerRequest) {
+        try {
+            LoginResponseDTO response = authService.register(registerRequest);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
-        
-        return ResponseEntity.badRequest().build();
     }
 
     @PostMapping("/register-admin")
-    public ResponseEntity<LoginResponseDTO> registerAdmin(@RequestBody RegisterRequestDTO body){
-        Optional<User> user = this.repository.findByEmail(body.email());
-
-        if(user.isEmpty()) {
-            User newUser = new User();
-            newUser.setPassword(passwordEncoder.encode(body.password()));
-            newUser.setEmail(body.email());
-            newUser.setRole(Role.ADMIN);
-            this.repository.save(newUser);
-
-            String token = this.tokenService.generateToken(newUser);
-            return ResponseEntity.ok(new LoginResponseDTO(newUser.getEmail(), token));
+    public ResponseEntity<?> registerAdmin(@RequestBody RegisterRequestDTO registerRequest) {
+        try {
+            LoginResponseDTO response = authService.registerAdmin(registerRequest);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
-        
-        return ResponseEntity.badRequest().build();
     }
 }
