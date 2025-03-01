@@ -23,9 +23,13 @@ public class Reserva {
     @JoinColumn(name = "user_id", nullable = false)
     private User usuario;
 
-    // @Column(nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "cabin_id", nullable = false)
+    private Cabin cabin;
+
+    @Column(nullable = false)
     private LocalDate dataCheckIn;
 
-    //@Column(nullable = false)
+    @Column(nullable = false)
     private LocalDate dataCheckOut;
 }
