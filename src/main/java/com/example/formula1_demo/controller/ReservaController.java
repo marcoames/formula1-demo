@@ -7,11 +7,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import com.example.formula1_demo.DTO.ErrorResponse;
+import com.example.formula1_demo.DTO.ReservationRequestDTO;
 import com.example.formula1_demo.entity.Reserva;
 import com.example.formula1_demo.service.ReservaService;
 
-import java.util.List;
 
+import java.util.List;
 
 
 @RestController
@@ -33,9 +35,13 @@ public class ReservaController {
 
     @PostMapping
     //@PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> createReserva() {
-        reservaService.createReserva();
-        return new ResponseEntity<>("Reserva criada", HttpStatus.OK);
+    public ResponseEntity<?> createReserva(@RequestBody ReservationRequestDTO reservationRequest) {
+        try { 
+            reservaService.createReserva(reservationRequest);
+            return new ResponseEntity<>("Reserva criada", HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("/{id}")
@@ -46,12 +52,10 @@ public class ReservaController {
     }
 
     @GetMapping("/user/{usuarioId}")
-    public List<Reserva> getReservasByUsuario(@PathVariable Long usuarioId) {
-        return reservaService.getReservasByUsuarioId(usuarioId);
+    public ResponseEntity<?> getReservasByUsuario(@PathVariable Long usuarioId) {
+        List<Reserva> reservas = reservaService.getReservasByUsuarioId(usuarioId);
+        return new ResponseEntity<>(reservas, HttpStatus.OK);
     }
-
-
-
     
     
 }
