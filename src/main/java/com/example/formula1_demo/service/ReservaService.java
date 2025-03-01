@@ -5,8 +5,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.example.formula1_demo.DTO.ReservationRequestDTO;
+import com.example.formula1_demo.entity.Cabin;
 import com.example.formula1_demo.entity.Reserva;
 import com.example.formula1_demo.entity.User;
+import com.example.formula1_demo.repository.CabinRepository;
 import com.example.formula1_demo.repository.ReservaRepository;
 
 import java.util.List;
@@ -17,27 +20,32 @@ import java.util.stream.Collectors;
 public class ReservaService {
     
     private final ReservaRepository reservaRepository;
+    private final CabinRepository cabinRepository;
 
-    public ReservaService(ReservaRepository reservaRepository) {
+    public ReservaService(ReservaRepository reservaRepository, CabinRepository cabinRepository) {
         this.reservaRepository = reservaRepository;
+        this.cabinRepository = cabinRepository;
     }
 
     public List<Reserva> listarTodasReservas() {
         return reservaRepository.findAll();
     }
 
-    public Reserva createReserva() {
+    public Reserva createReserva(ReservationRequestDTO reservationRequest) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         User authenticatedUser = (User) authentication.getPrincipal();
-
-        Reserva reserva = new Reserva();
-        reserva.setUsuario(authenticatedUser);
-        reserva.setDataCheckIn(null);
-        reserva.setDataCheckOut(null);
+        Cabin cabin = cabinRepository.findById(reservationRequest.cabinId()).orElseThrow(() -> new RuntimeException("Cabin not found")); ;
         
-        return reservaRepository.save(reserva);
+        Reserva newReserva = new Reserva();
+
+        newReserva.setUsuario(authenticatedUser);
+        newReserva.setCabin(cabin);
+        newReserva.setDataCheckIn(reservationRequest.checkIn());
+        newReserva.setDataCheckOut(reservationRequest.checkOut());
+        
+        return reservaRepository.save(newReserva);
     }
 
     public Optional<Reserva> getReservaById(Long id) {
